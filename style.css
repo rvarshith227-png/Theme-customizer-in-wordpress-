@@ -1,0 +1,331 @@
+/* --- Global Reset & Fonts --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f0f4f8; /* Light blue-gray for depth */
+    transition: background-color 0.5s, color 0.5s; /* Smooth transitions for theme changes */
+}
+
+/* --- Main App Layout --- */
+#customizer-app {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- 1. Settings Sidebar (The Customizer Panel) --- */
+#customizer-sidebar {
+    width: 380px;
+    background-color: #ffffff;
+    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    transform: translateX(0);
+    /* Springy Animation for sliding */
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+    display: flex;
+    flex-direction: column;
+}
+
+#customizer-sidebar.hidden {
+    transform: translateX(-380px);
+}
+
+#customizer-sidebar header {
+    background-color: #1a73e8; /* Google Blue - Modern, strong accent */
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Nested Menu Styling --- */
+.settings-content {
+    flex-grow: 1;
+    overflow: hidden; /* Hide overflowing menu levels */
+    position: relative;
+}
+
+.menu-level {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 100%; /* Initially off-screen to the right */
+    padding: 20px;
+    background-color: #ffffff;
+    overflow-y: auto;
+    /* Menu Slide Animation */
+    transition: left 0.4s ease-in-out; 
+}
+
+.menu-level.active {
+    left: 0; /* Slide into view */
+}
+
+.menu-level h3 {
+    display: flex;
+    align-items: center;
+    color: #1a73e8;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.back-btn {
+    margin-right: 15px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.back-btn:hover {
+    transform: translateX(-2px);
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 10px;
+    margin-bottom: 8px;
+    background-color: #f7f9fa;
+    border: 1px solid #e0e4e8;
+    border-radius: 6px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.menu-item:hover {
+    background-color: #e8f0fe;
+    border-color: #1a73e8;
+    transform: translateX(5px); /* Slide on hover animation */
+}
+
+.menu-item i:first-child {
+    margin-right: 10px;
+    color: #1a73e8;
+}
+
+.menu-item i:last-child {
+    color: #999;
+    font-size: 0.8rem;
+}
+
+/* Setting Groups */
+.setting-section {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+.setting-section:last-child {
+    border-bottom: none;
+}
+
+/* Input Styling */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* --- Footer and Button Status --- */
+#customizer-sidebar footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#status-message {
+    color: #28a745;
+    font-weight: 700;
+    margin-right: auto;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s, transform 0.4s;
+}
+
+#status-message.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.save-btn, .publish-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.save-btn {
+    background-color: #c7cdd1;
+    color: #333;
+}
+
+.publish-btn {
+    background-color: #1a73e8;
+    color: white;
+    box-shadow: 0 4px 8px rgba(26, 115, 232, 0.2);
+}
+
+.publish-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(26, 115, 232, 0.3); }
+
+/* --- 2. Live Preview Area --- */
+#live-preview {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    transition: filter 0.3s ease-in-out;
+}
+
+#live-preview.dimmed {
+    filter: brightness(0.95) blur(1px); /* More noticeable effect */
+}
+
+.preview-toolbar {
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.device-buttons i {
+    font-size: 1.2rem;
+    color: #999;
+    margin-left: 15px;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.device-buttons i:hover, .device-buttons i.active-device {
+    color: #1a73e8;
+    transform: scale(1.1);
+}
+
+/* Device Viewport Simulation */
+#preview-viewport {
+    height: 100%;
+    margin: 20px auto;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    transition: width 0.5s ease-in-out; /* Smooth resizing animation */
+    overflow-y: auto;
+    max-width: 100%;
+}
+
+/* Device Widths */
+#preview-viewport.desktop { width: 90%; }
+#preview-viewport.tablet { width: 768px; }
+#preview-viewport.mobile { width: 375px; }
+
+
+/* Preview Header (The Image Section) */
+#preview-header {
+    height: 30vh; /* Default height, controlled by JS */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transition: height 0.5s, background-image 0.5s;
+}
+
+#preview-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Preview Content */
+#preview-content {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px 40px;
+    transition: font-size 0.5s, color 0.5s;
+}
+
+#preview-heading {
+    margin-bottom: 15px;
+    color: #1a73e8;
+}
+
+.card {
+    background-color: #f7f9fa;
+    padding: 25px;
+    margin-top: 25px;
+    border: 1px solid #eee;
+    transition: border-radius 0.3s;
+}
+
+/* Preview Button Styling (Dynamic) */
+.preview-button {
+    padding: 12px 25px;
+    border: none;
+    color: white;
+    margin: 20px 0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, border-radius 0.3s, transform 0.2s;
+}
+
+.preview-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Overlay for Save/Publish Success Animation */
+#overlay-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(40, 167, 69, 0.9); /* Green Overlay */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+}
+
+#overlay-message i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    /* Pulsing Animation */
+    animation: pulse 1.5s infinite alternate; 
+}
+
+@keyframes pulse {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(1.1); opacity: 0.8; }
+}
+
+#overlay-message.visible {
+    opacity: 1;
+}
